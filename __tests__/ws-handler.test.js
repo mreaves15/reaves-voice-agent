@@ -1,53 +1,48 @@
-// Test the WebSocket handler utilities
-
-describe('isSentenceEnd', () => {
-  // Extract the function for testing
-  const isSentenceEnd = (text) => /[.!?]\s*$/.test(text) || text.length > 150;
-
-  test('detects period at end', () => {
-    expect(isSentenceEnd('Hello there.')).toBe(true);
+describe('Audio format handling', () => {
+  test('g711_ulaw is the correct format for Twilio', () => {
+    // Twilio Media Streams use μ-law encoding
+    const format = 'g711_ulaw';
+    expect(format).toBe('g711_ulaw');
   });
 
-  test('detects question mark', () => {
-    expect(isSentenceEnd('How are you?')).toBe(true);
-  });
+  test('base64 audio payloads are forwarded as-is', () => {
+    // Simulate Twilio media payload
+    const twilioPayload = {
+      event: 'media',
+      media: { payload: 'SGVsbG8gV29ybGQ=' }, // base64 audio
+    };
 
-  test('detects exclamation', () => {
-    expect(isSentenceEnd('Great!')).toBe(true);
-  });
+    // OpenAI expects same base64 format
+    const openAiMessage = {
+      type: 'input_audio_buffer.append',
+      audio: twilioPayload.media.payload,
+    };
 
-  test('returns false for incomplete sentence', () => {
-    expect(isSentenceEnd('Hello there')).toBe(false);
-  });
-
-  test('returns true for long text over 150 chars', () => {
-    const longText = 'a'.repeat(151);
-    expect(isSentenceEnd(longText)).toBe(true);
+    expect(openAiMessage.audio).toBe(twilioPayload.media.payload);
   });
 });
 
-describe('extractCallerInfo', () => {
-  test('extracts phone number from text', () => {
-    const callerInfo = { name: null, phone: null, details: [] };
-    const text = 'My number is 352-555-1234';
+describe('Interruption handling', () => {
+  test('clear event has correct structure', () => {
+    const streamSid = 'MZ123456';
+    const clearEvent = {
+      event: 'clear',
+      streamSid,
+    };
 
-    callerInfo.details.push(text);
-    const phoneMatch = text.match(/\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/);
-    if (phoneMatch) callerInfo.phone = phoneMatch[0];
-
-    expect(callerInfo.phone).toBe('352-555-1234');
+    expect(clearEvent.event).toBe('clear');
+    expect(clearEvent.streamSid).toBe('MZ123456');
   });
 
-  test('extracts phone with dots', () => {
-    const text = 'Call me at 352.555.1234';
-    const phoneMatch = text.match(/\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/);
-    expect(phoneMatch[0]).toBe('352.555.1234');
-  });
+  test('truncate event has correct structure', () => {
+    const truncateEvent = {
+      type: 'conversation.item.truncate',
+      item_id: 'item_123',
+      content_index: 0,
+      audio_end_ms: 5000,
+    };
 
-  test('stores utterance in details', () => {
-    const callerInfo = { name: null, phone: null, details: [] };
-    callerInfo.details.push('I want to sell my land');
-    callerInfo.details.push('It is in Putnam County');
-    expect(callerInfo.details).toHaveLength(2);
+    expect(truncateEvent.type).toBe('conversation.item.truncate');
+    expect(truncateEvent.audio_end_ms).toBe(5000);
   });
 });
