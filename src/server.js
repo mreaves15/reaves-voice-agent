@@ -7,7 +7,7 @@ const { notifyMatt, addTranscript, getTranscript, summarizeCall } = require('./n
 
 const PORT = process.env.PORT || 3000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const VOICE = 'sage'; // OpenAI voice: alloy, echo, shimmer, ash, ballad, coral, sage, verse
+const VOICE = 'coral'; // OpenAI voice: alloy, echo, shimmer, ash, ballad, coral, sage, verse
 
 if (!OPENAI_API_KEY) {
   console.error('[server] Missing OPENAI_API_KEY');
