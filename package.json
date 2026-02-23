@@ -1,0 +1,24 @@
+{
+  "name": "reaves-voice-agent",
+  "version": "1.0.0",
+  "description": "Twilio voice agent for Reaves Holdings LLC",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "openai": "^4.80.1",
+    "twilio": "^5.5.1",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
