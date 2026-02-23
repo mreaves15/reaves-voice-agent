@@ -95,10 +95,10 @@ async function handlePrompt(ws, callSid, userText, callerInfo) {
   try {
     const openai = getOpenAI();
     const stream = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       messages: conversation,
       stream: true,
-      max_completion_tokens: 200,
+      max_completion_tokens: 300,
     });
 
     let fullResponse = '';
@@ -182,7 +182,7 @@ async function extractAndNotify(callSid, conversation, callerInfo) {
 
     // Ask GPT to summarize the call
     const summary = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
