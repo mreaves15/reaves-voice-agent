@@ -77,7 +77,7 @@ function handleMediaStream(twilioWs) {
 
   // Connect to OpenAI Realtime API
   const openAiWs = new WebSocket(
-    'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2025-06-03',
+    'wss://api.openai.com/v1/realtime?model=gpt-realtime-1.5',
     {
       headers: {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
